@@ -28,7 +28,7 @@
 ### Запуск:
 1. Клонируйте репозиторий:
 ```
-git clone https://github.com/your-username/transport-problem-solver.git
+git clone https://github.com/Vikachy/transport-problem-solver.git
 ```
 2.Откройте решение в Visual Studio:
 
