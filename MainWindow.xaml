@@ -1,0 +1,136 @@
+﻿<Window x:Class="TransportProblemApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Решение транспортной задачи" Height="700" Width="1000">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Панель управления -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Транспортная задача" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+
+            <ComboBox x:Name="cmbMethod" Margin="20,0,0,0" Width="220" SelectedIndex="0">
+                <ComboBoxItem Content="Метод северо-западного угла"/>
+                <ComboBoxItem Content="Метод минимальных элементов"/>
+            </ComboBox>
+
+            <Button x:Name="btnCalculate" Content="Рассчитать" Click="BtnCalculate_Click" 
+                    Margin="10,0,0,0" Width="100" Background="LightBlue"/>
+            <Button x:Name="btnClear" Content="Очистить" Click="BtnClear_Click" 
+                    Margin="10,0,0,0" Width="80" Background="LightCoral"/>
+            <Button x:Name="btnExample" Content="Пример" Click="BtnExample_Click" 
+                    Margin="10,0,0,0" Width="80" Background="LightGreen"/>
+        </StackPanel>
+
+        <!-- Основное содержимое -->
+        <TabControl Grid.Row="1">
+            <!-- Ввод данных -->
+            <TabItem Header="Ввод данных">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="10">
+                        <!-- Размеры матрицы -->
+                        <GroupBox Header="Настройка размеров" Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" Margin="5">
+                                <TextBlock Text="Поставщики:" VerticalAlignment="Center"/>
+                                <TextBox x:Name="txtSuppliers" Text="3" Width="40" Margin="5,0,20,0"/>
+                                <TextBlock Text="Потребители:" VerticalAlignment="Center"/>
+                                <TextBox x:Name="txtConsumers" Text="5" Width="40" Margin="5,0,20,0"/>
+                                <Button x:Name="btnResize" Content="Применить размеры" Click="BtnResize_Click" 
+                                        Margin="10,0,0,0" Width="120"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Матрица тарифов -->
+                        <GroupBox Header="Матрица тарифов (стоимости перевозок)" Margin="0,0,0,10">
+                            <StackPanel Margin="5">
+                                <TextBlock Text="Введите стоимости перевозок от поставщиков к потребителям:" 
+                                          Margin="0,0,0,5"/>
+                                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" 
+                                              MaxHeight="300">
+                                    <ItemsControl x:Name="costsMatrix">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Vertical"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Запасы и потребности -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="10"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Запасы -->
+                            <GroupBox Header="Запасы поставщиков" Grid.Column="0">
+                                <StackPanel Margin="5">
+                                    <TextBlock Text="Введите запасы для каждого поставщика:" Margin="0,0,0,5"/>
+                                    <ItemsControl x:Name="suppliesList">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Vertical"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!-- Потребности -->
+                            <GroupBox Header="Потребности потребителей" Grid.Column="2">
+                                <StackPanel Margin="5">
+                                    <TextBlock Text="Введите потребности для каждого потребителя:" Margin="0,0,0,5"/>
+                                    <ItemsControl x:Name="demandsList">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Orientation="Vertical"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </GroupBox>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- Результаты -->
+            <TabItem Header="Результаты" x:Name="tabResults">
+                <ScrollViewer>
+                    <StackPanel Margin="10">
+                        <TextBlock x:Name="txtMethodName" FontSize="14" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                        <GroupBox Header="Опорный план перевозок" Margin="0,0,0,10">
+                            <DataGrid x:Name="dgResults" AutoGenerateColumns="True" 
+                                     CanUserAddRows="False" CanUserDeleteRows="False"
+                                     MinHeight="200"/>
+                        </GroupBox>
+
+                        <TextBlock x:Name="txtTotalCost" FontSize="12" FontWeight="Bold" Margin="0,10,0,5"
+                                  Foreground="DarkBlue"/>
+                        <TextBlock x:Name="txtBalance" FontSize="11" Margin="0,0,0,10"/>
+
+                        <GroupBox Header="Пошаговое решение" Margin="0,0,0,10">
+                            <ScrollViewer MaxHeight="200">
+                                <TextBlock x:Name="txtSteps" FontSize="10" TextWrapping="Wrap" Margin="5"/>
+                            </ScrollViewer>
+                        </GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <!-- Статус -->
+        <StatusBar Grid.Row="2">
+            <TextBlock x:Name="txtStatus" Text="Готов к работе. Введите данные и нажмите 'Рассчитать'"/>
+        </StatusBar>
+    </Grid>
+</Window>
