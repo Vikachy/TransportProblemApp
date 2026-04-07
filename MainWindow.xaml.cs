@@ -36,17 +36,19 @@ namespace TransportProblemApp
 
                 if (suppliersCount <= 0 || consumersCount <= 0)
                 {
-                    MessageBox.Show("Размеры должны быть положительными числами!");
+                    MessageBox.Show("Размеры должны быть положительными числами!", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
                 CreateCostsMatrix();
                 CreateSuppliesDemands();
-                txtStatus.Text = $"Создана матрица {suppliersCount}x{consumersCount}";
+                txtStatus.Text = $"Создана матрица {suppliersCount}×{consumersCount}";
             }
             catch (FormatException)
             {
-                MessageBox.Show("Введите корректные числа для размеров!");
+                MessageBox.Show("Введите корректные числа для размеров!", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -54,13 +56,14 @@ namespace TransportProblemApp
         {
             costsMatrix.Items.Clear();
 
-            // Заголовок столбцов
-            var headerPanel = new StackPanel { Orientation = Orientation.Horizontal };
+            // Заголовок
+            var headerPanel = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 4) };
             headerPanel.Children.Add(new TextBlock
             {
                 Text = "Поставщик\\Потребитель",
                 Width = 120,
-                FontWeight = FontWeights.Bold
+                FontWeight = FontWeights.Bold,
+                VerticalAlignment = VerticalAlignment.Center
             });
 
             for (int j = 0; j < consumersCount; j++)
@@ -69,13 +72,14 @@ namespace TransportProblemApp
                 {
                     Text = $"B{j + 1}",
                     Width = 60,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    FontWeight = FontWeights.Bold
+                    TextAlignment = TextAlignment.Center,
+                    FontWeight = FontWeights.Bold,
+                    VerticalAlignment = VerticalAlignment.Center
                 });
             }
             costsMatrix.Items.Add(headerPanel);
 
-            // Данные матрицы
+            // Данные
             for (int i = 0; i < suppliersCount; i++)
             {
                 var rowPanel = new StackPanel { Orientation = Orientation.Horizontal };
@@ -92,15 +96,14 @@ namespace TransportProblemApp
                     var textBox = new TextBox
                     {
                         Width = 60,
-                        Height = 25,
+                        Height = 22,
                         Margin = new Thickness(2),
                         Text = "0",
-                        HorizontalContentAlignment = HorizontalAlignment.Center,
+                        TextAlignment = TextAlignment.Center,
                         Background = Brushes.White
                     };
                     rowPanel.Children.Add(textBox);
                 }
-
                 costsMatrix.Items.Add(rowPanel);
             }
         }
@@ -110,10 +113,13 @@ namespace TransportProblemApp
             suppliesList.Items.Clear();
             demandsList.Items.Clear();
 
-            // Запасы
             for (int i = 0; i < suppliersCount; i++)
             {
-                var stackPanel = new StackPanel { Orientation = Orientation.Horizontal };
+                var stackPanel = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    Margin = new Thickness(0, 0, 4, 0)  // right=4
+                };
                 stackPanel.Children.Add(new TextBlock
                 {
                     Text = $"Поставщик A{i + 1}:",
@@ -124,10 +130,10 @@ namespace TransportProblemApp
                 var textBox = new TextBox
                 {
                     Width = 80,
-                    Height = 25,
-                    Margin = new Thickness(2),
+                    Height = 22,
+                    Margin = new Thickness(8, 0, 0, 0),  // left=8
                     Text = "0",
-                    HorizontalContentAlignment = HorizontalAlignment.Center
+                    TextAlignment = TextAlignment.Center
                 };
                 stackPanel.Children.Add(textBox);
                 suppliesList.Items.Add(stackPanel);
@@ -135,7 +141,11 @@ namespace TransportProblemApp
 
             for (int j = 0; j < consumersCount; j++)
             {
-                var stackPanel = new StackPanel { Orientation = Orientation.Horizontal };
+                var stackPanel = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    Margin = new Thickness(0, 2, 0, 0)  // top=2
+                };
                 stackPanel.Children.Add(new TextBlock
                 {
                     Text = $"Потребитель B{j + 1}:",
@@ -146,10 +156,10 @@ namespace TransportProblemApp
                 var textBox = new TextBox
                 {
                     Width = 80,
-                    Height = 25,
-                    Margin = new Thickness(2),
+                    Height = 22,
+                    Margin = new Thickness(8, 0, 0, 0),  // left=8
                     Text = "0",
-                    HorizontalContentAlignment = HorizontalAlignment.Center
+                    TextAlignment = TextAlignment.Center
                 };
                 stackPanel.Children.Add(textBox);
                 demandsList.Items.Add(stackPanel);
@@ -158,7 +168,6 @@ namespace TransportProblemApp
 
         private void BtnExample_Click(object sender, RoutedEventArgs e)
         {
-            // Установка примера данных
             txtSuppliers.Text = "3";
             txtConsumers.Text = "5";
             suppliersCount = 3;
@@ -167,13 +176,11 @@ namespace TransportProblemApp
             CreateCostsMatrix();
             CreateSuppliesDemands();
 
-            // Заполнение примера
+            // Пример данных
             SetMatrixValue(0, 0, "20"); SetMatrixValue(0, 1, "10"); SetMatrixValue(0, 2, "13");
             SetMatrixValue(0, 3, "13"); SetMatrixValue(0, 4, "18");
-
             SetMatrixValue(1, 0, "27"); SetMatrixValue(1, 1, "19"); SetMatrixValue(1, 2, "20");
             SetMatrixValue(1, 3, "16"); SetMatrixValue(1, 4, "22");
-
             SetMatrixValue(2, 0, "26"); SetMatrixValue(2, 1, "17"); SetMatrixValue(2, 2, "19");
             SetMatrixValue(2, 3, "21"); SetMatrixValue(2, 4, "23");
 
@@ -198,8 +205,7 @@ namespace TransportProblemApp
                 if (rowPanel != null && rowPanel.Children.Count > col + 1)
                 {
                     var textBox = rowPanel.Children[col + 1] as TextBox;
-                    if (textBox != null)
-                        textBox.Text = value;
+                    if (textBox != null) textBox.Text = value;
                 }
             }
         }
@@ -212,8 +218,7 @@ namespace TransportProblemApp
                 if (panel != null && panel.Children.Count > 1)
                 {
                     var textBox = panel.Children[1] as TextBox;
-                    if (textBox != null)
-                        textBox.Text = value;
+                    if (textBox != null) textBox.Text = value;
                 }
             }
         }
@@ -226,23 +231,20 @@ namespace TransportProblemApp
                 if (panel != null && panel.Children.Count > 1)
                 {
                     var textBox = panel.Children[1] as TextBox;
-                    if (textBox != null)
-                        textBox.Text = value;
+                    if (textBox != null) textBox.Text = value;
                 }
             }
         }
 
         private void BtnClear_Click(object sender, RoutedEventArgs e)
         {
-            // Очистка всех полей ввода
             foreach (var item in costsMatrix.Items)
             {
                 if (item is StackPanel rowPanel)
                 {
                     foreach (var child in rowPanel.Children)
                     {
-                        if (child is TextBox textBox)
-                            textBox.Text = "0";
+                        if (child is TextBox textBox) textBox.Text = "0";
                     }
                 }
             }
@@ -251,8 +253,7 @@ namespace TransportProblemApp
             {
                 if (item is StackPanel panel && panel.Children.Count > 1)
                 {
-                    if (panel.Children[1] is TextBox textBox)
-                        textBox.Text = "0";
+                    if (panel.Children[1] is TextBox textBox) textBox.Text = "0";
                 }
             }
 
@@ -260,34 +261,29 @@ namespace TransportProblemApp
             {
                 if (item is StackPanel panel && panel.Children.Count > 1)
                 {
-                    if (panel.Children[1] is TextBox textBox)
-                        textBox.Text = "0";
+                    if (panel.Children[1] is TextBox textBox) textBox.Text = "0";
                 }
             }
 
-            txtStatus.Text = "Все поля очищены";
+            txtStatus.Text = " Все поля очищены";
         }
 
         private void BtnCalculate_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                // Сохраняем оригинальные размеры
                 originalSuppliersCount = suppliersCount;
                 originalConsumersCount = consumersCount;
 
-                // Получение данных из интерфейса
                 var costs = GetCostsMatrix();
                 var supplies = GetSupplies();
                 var demands = GetDemands();
 
-                // Проверка баланса и балансировка
                 var balancedData = BalanceProblem(costs, supplies, demands);
                 costs = balancedData.costs;
                 supplies = balancedData.supplies;
                 demands = balancedData.demands;
 
-                // Выбор метода решения
                 TransportSolver solver;
                 string methodName = "";
 
@@ -309,13 +305,9 @@ namespace TransportProblemApp
 
                 txtMethodName.Text = methodName;
 
-                // Решение задачи
                 var result = solver.Solve(costs, supplies, demands);
-
-                // Расчет реальной стоимости (без фиктивных перевозок)
                 int realCost = CalculateRealCost(result.TransportPlan, balancedData, costs);
 
-                // Отображение результатов
                 DisplayResults(result, balancedData, realCost);
 
                 txtStatus.Text = $"Расчет завершен. Стоимость: {realCost}";
@@ -323,8 +315,8 @@ namespace TransportProblemApp
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при расчете: {ex.Message}", "Ошибка",
-                              MessageBoxButton.OK, MessageBoxImage.Error);
-                txtStatus.Text = "Ошибка при расчете";
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                txtStatus.Text = " Ошибка при расчете";
             }
         }
 
@@ -334,7 +326,7 @@ namespace TransportProblemApp
             int totalSupply = supplies.Sum();
             int totalDemand = demands.Sum();
 
-            txtBalance.Text = $"Общие запасы: {totalSupply}, Общие потребности: {totalDemand}";
+            txtBalance.Text = $"Общие запасы: {totalSupply} | Общие потребности: {totalDemand}";
 
             if (totalSupply == totalDemand)
             {
@@ -347,59 +339,41 @@ namespace TransportProblemApp
 
             if (totalSupply > totalDemand)
             {
-                // Добавляем фиктивного потребителя
                 int newConsumersCount = consumersCount + 1;
                 var newCosts = new int[suppliersCount, newConsumersCount];
                 var newDemands = new int[newConsumersCount];
 
-                // Копируем старые данные
                 for (int i = 0; i < suppliersCount; i++)
                 {
-                    for (int j = 0; j < consumersCount; j++)
-                    {
-                        newCosts[i, j] = costs[i, j];
-                    }
-                    // Стоимость перевозки к фиктивному потребителю = 0
+                    for (int j = 0; j < consumersCount; j++) newCosts[i, j] = costs[i, j];
                     newCosts[i, consumersCount] = 0;
                 }
 
-                for (int j = 0; j < consumersCount; j++)
-                {
-                    newDemands[j] = demands[j];
-                }
+                for (int j = 0; j < consumersCount; j++) newDemands[j] = demands[j];
                 newDemands[consumersCount] = balanceDiff;
 
-                MessageBox.Show($"Задача не сбалансирована! Добавлен фиктивный потребитель B{consumersCount + 1} с потребностью {balanceDiff}",
-                              "Внимание", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"⚠️ Задача не сбалансирована!\nДобавлен фиктивный потребитель B{consumersCount + 1} с потребностью {balanceDiff}",
+                    "Балансировка", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 return (newCosts, supplies, newDemands, false, true);
             }
             else
             {
-                // Добавляем фиктивного поставщика
                 int newSuppliersCount = suppliersCount + 1;
                 var newCosts = new int[newSuppliersCount, consumersCount];
                 var newSupplies = new int[newSuppliersCount];
 
-                // Копируем старые данные
                 for (int i = 0; i < suppliersCount; i++)
                 {
-                    for (int j = 0; j < consumersCount; j++)
-                    {
-                        newCosts[i, j] = costs[i, j];
-                    }
+                    for (int j = 0; j < consumersCount; j++) newCosts[i, j] = costs[i, j];
                     newSupplies[i] = supplies[i];
                 }
 
-                // Стоимость перевозки от фиктивного поставщика = 0
-                for (int j = 0; j < consumersCount; j++)
-                {
-                    newCosts[suppliersCount, j] = 0;
-                }
+                for (int j = 0; j < consumersCount; j++) newCosts[suppliersCount, j] = 0;
                 newSupplies[suppliersCount] = balanceDiff;
 
-                MessageBox.Show($"Задача не сбалансирована! Добавлен фиктивный поставщик A{suppliersCount + 1} с запасом {balanceDiff}",
-                              "Внимание", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"⚠️ Задача не сбалансирована!\nДобавлен фиктивный поставщик A{suppliersCount + 1} с запасом {balanceDiff}",
+                    "Балансировка", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 return (newCosts, newSupplies, demands, true, false);
             }
@@ -409,41 +383,25 @@ namespace TransportProblemApp
         {
             int realCost = 0;
 
-            // Если задача сбалансирована - возвращаем полную стоимость
             if (isBalanced)
             {
                 for (int i = 0; i < transportPlan.GetLength(0); i++)
-                {
                     for (int j = 0; j < transportPlan.GetLength(1); j++)
-                    {
                         realCost += transportPlan[i, j] * balancedData.costs[i, j];
-                    }
-                }
                 return realCost;
             }
 
-            // Если несбалансирована - считаем только реальные перевозки
             if (balancedData.addedRow)
             {
-                // Игнорируем последнюю строку (фиктивный поставщик)
                 for (int i = 0; i < originalSuppliersCount; i++)
-                {
                     for (int j = 0; j < originalConsumersCount; j++)
-                    {
                         realCost += transportPlan[i, j] * originalCosts[i, j];
-                    }
-                }
             }
             else if (balancedData.addedColumn)
             {
-                // Игнорируем последний столбец (фиктивный потребитель)
                 for (int i = 0; i < originalSuppliersCount; i++)
-                {
                     for (int j = 0; j < originalConsumersCount; j++)
-                    {
                         realCost += transportPlan[i, j] * originalCosts[i, j];
-                    }
-                }
             }
 
             return realCost;
@@ -453,7 +411,6 @@ namespace TransportProblemApp
         {
             var dataTable = new System.Data.DataTable();
 
-            // Добавляем столбцы
             dataTable.Columns.Add("Поставщик\\Потребитель");
             int displayConsumersCount = balancedData.addedColumn ? consumersCount + 1 : consumersCount;
 
@@ -465,7 +422,6 @@ namespace TransportProblemApp
             }
             dataTable.Columns.Add("Запасы");
 
-            // Добавляем строки
             int displaySuppliersCount = balancedData.addedRow ? suppliersCount + 1 : suppliersCount;
 
             for (int i = 0; i < displaySuppliersCount; i++)
@@ -476,57 +432,46 @@ namespace TransportProblemApp
                 row[0] = supplierName;
 
                 for (int j = 0; j < displayConsumersCount; j++)
-                {
                     row[j + 1] = result.TransportPlan[i, j];
-                }
 
                 row[displayConsumersCount + 1] = balancedData.supplies[i];
                 dataTable.Rows.Add(row);
             }
 
-            // Добавляем строку с потребностями
             var demandRow = dataTable.NewRow();
             demandRow[0] = "Потребности";
             for (int j = 0; j < displayConsumersCount; j++)
-            {
                 demandRow[j + 1] = balancedData.demands[j];
-            }
             demandRow[displayConsumersCount + 1] = balancedData.demands.Sum();
             dataTable.Rows.Add(demandRow);
 
             dgResults.ItemsSource = dataTable.DefaultView;
 
-            // Отображение стоимости
             if (!isBalanced)
             {
-                txtTotalCost.Text = $"💰 Общая стоимость перевозок: {realCost}\n" +
-                                  $"📊 Полная стоимость (с фиктивными): {result.TotalCost}\n" +
-                                  $"⚖️ Задача была несбалансирована, добавлен фиктивный " +
+                txtTotalCost.Text = $"ОБЩАЯ СТОИМОСТЬ ПЕРЕВОЗОК: {realCost}\n" +
+                                  $"Полная стоимость (с фиктивными): {result.TotalCost}\n" +
+                                  $" Задача была несбалансирована, добавлен фиктивный " +
                                   (balancedData.addedRow ? "поставщик" : "потребитель");
             }
             else
             {
-                txtTotalCost.Text = $"💰 Общая стоимость перевозок: {realCost}";
+                txtTotalCost.Text = $"ОБЩАЯ СТОИМОСТЬ ПЕРЕВОЗОК: {realCost}";
             }
 
-            // Добавляем информацию о фиктивных перевозках в шаги
             string stepsWithInfo = result.Steps;
             if (!isBalanced)
             {
-                stepsWithInfo += $"\n ИНФОРМАЦИЯ О БАЛАНСИРОВКЕ\n";
+                stepsWithInfo += $"\n\n═══════════════════════════════════════\n";
+                stepsWithInfo += $" ИНФОРМАЦИЯ О БАЛАНСИРОВКЕ\n";
                 if (balancedData.addedRow)
-                {
-                    stepsWithInfo += $"✅ Добавлен фиктивный поставщик A{suppliersCount + 1} с запасом {balancedData.supplies[suppliersCount]}\n";
-                }
+                    stepsWithInfo += $" Добавлен фиктивный поставщик A{suppliersCount + 1} с запасом {balancedData.supplies[suppliersCount]}\n";
                 if (balancedData.addedColumn)
-                {
-                    stepsWithInfo += $"✅ Добавлен фиктивный потребитель B{consumersCount + 1} с потребностью {balancedData.demands[consumersCount]}\n";
-                }
-                stepsWithInfo += $"💰 Реальная стоимость (без фиктивных перевозок): {realCost}";
+                    stepsWithInfo += $" Добавлен фиктивный потребитель B{consumersCount + 1} с потребностью {balancedData.demands[consumersCount]}\n";
+                stepsWithInfo += $" Реальная стоимость (без фиктивных перевозок): {realCost}";
             }
 
             txtSteps.Text = stepsWithInfo;
-
             tabResults.IsSelected = true;
         }
 
@@ -543,17 +488,12 @@ namespace TransportProblemApp
                     {
                         var textBox = rowPanel.Children[j + 1] as TextBox;
                         if (textBox != null && int.TryParse(textBox.Text, out int value))
-                        {
                             costs[i, j] = value;
-                        }
                         else
-                        {
                             costs[i, j] = 0;
-                        }
                     }
                 }
             }
-
             return costs;
         }
 
@@ -568,16 +508,11 @@ namespace TransportProblemApp
                 {
                     var textBox = panel.Children[1] as TextBox;
                     if (textBox != null && int.TryParse(textBox.Text, out int value))
-                    {
                         supplies[i] = value;
-                    }
                     else
-                    {
                         supplies[i] = 0;
-                    }
                 }
             }
-
             return supplies;
         }
 
@@ -592,16 +527,11 @@ namespace TransportProblemApp
                 {
                     var textBox = panel.Children[1] as TextBox;
                     if (textBox != null && int.TryParse(textBox.Text, out int value))
-                    {
                         demands[i] = value;
-                    }
                     else
-                    {
                         demands[i] = 0;
-                    }
                 }
             }
-
             return demands;
         }
     }
@@ -631,8 +561,11 @@ namespace TransportProblemApp
             int[] sup = (int[])supplies.Clone();
             int[] dem = (int[])demands.Clone();
 
-            steps.AppendLine("Метод северо-западного угла:");
-            steps.AppendLine("Начинаем с левого верхнего угла (A1-B1)");
+            steps.AppendLine("╔══════════════════════════════════════════════════════════════╗");
+            steps.AppendLine("║     МЕТОД СЕВЕРО-ЗАПАДНОГО УГЛА - ПОШАГОВОЕ РЕШЕНИЕ          ║");
+            steps.AppendLine("╚══════════════════════════════════════════════════════════════╝");
+            steps.AppendLine();
+            steps.AppendLine("Начинаем с левого верхнего угла (A1 → B1)");
 
             int i = 0, j = 0;
             int step = 1;
@@ -643,35 +576,34 @@ namespace TransportProblemApp
                 plan[i, j] = allocation;
                 totalCost += allocation * costs[i, j];
 
-                string cellInfo = $"A{i + 1}-B{j + 1} = {allocation}";
-                if (costs[i, j] == 0)
-                {
-                    cellInfo += " (фиктивная перевозка)";
-                }
-                else
-                {
+                string cellInfo = $"Шаг {step}: A{i + 1} → B{j + 1} = {allocation}";
+                if (costs[i, j] == 0 && allocation > 0)
+                    cellInfo += " [фиктивная перевозка]";
+                else if (costs[i, j] > 0 && allocation > 0)
                     cellInfo += $" (стоимость: {allocation} × {costs[i, j]} = {allocation * costs[i, j]})";
-                }
 
-                steps.AppendLine($"Шаг {step}: {cellInfo}");
+                steps.AppendLine(cellInfo);
 
                 sup[i] -= allocation;
                 dem[j] -= allocation;
 
                 if (sup[i] == 0)
                 {
-                    steps.AppendLine($"  Запас A{i + 1} исчерпан, переходим к A{i + 2}");
+                    steps.AppendLine($"  └─ Запас A{i + 1} исчерпан → переход к следующему поставщику");
                     i++;
                 }
                 if (dem[j] == 0)
                 {
-                    steps.AppendLine($"  Потребность B{j + 1} удовлетворена, переходим к B{j + 2}");
+                    steps.AppendLine($"  └─ Потребность B{j + 1} удовлетворена → переход к следующему потребителю");
                     j++;
                 }
                 step++;
             }
 
-            steps.AppendLine($"\nРасчет завершен. Полная стоимость (включая фиктивные): {totalCost}");
+            steps.AppendLine();
+            steps.AppendLine("═══════════════════════════════════════════════════════════════");
+            steps.AppendLine($"ИТОГО: Полная стоимость перевозок = {totalCost}");
+            steps.AppendLine("═══════════════════════════════════════════════════════════════");
 
             return new SolutionResult
             {
@@ -695,14 +627,16 @@ namespace TransportProblemApp
             int[] sup = (int[])supplies.Clone();
             int[] dem = (int[])demands.Clone();
 
-            steps.AppendLine("Метод минимальных элементов:");
-            steps.AppendLine("На каждом шаге выбираем клетку с минимальной стоимостью");
+            steps.AppendLine("╔══════════════════════════════════════════════════════════════╗");
+            steps.AppendLine("║       МЕТОД МИНИМАЛЬНЫХ ЭЛЕМЕНТОВ - ПОШАГОВОЕ РЕШЕНИЕ        ║");
+            steps.AppendLine("╚══════════════════════════════════════════════════════════════╝");
+            steps.AppendLine();
+            steps.AppendLine("На каждом шаге выбираем клетку с минимальной стоимостью перевозки");
 
             int step = 1;
 
             while (sup.Sum() > 0)
             {
-                // Находим клетку с минимальной стоимостью
                 int minCost = int.MaxValue;
                 int minI = -1, minJ = -1;
 
@@ -725,24 +659,23 @@ namespace TransportProblemApp
                 plan[minI, minJ] = allocation;
                 totalCost += allocation * costs[minI, minJ];
 
-                string cellInfo = $"A{minI + 1}-B{minJ + 1} = {allocation}";
-                if (costs[minI, minJ] == 0)
-                {
-                    cellInfo += " (фиктивная перевозка)";
-                }
-                else
-                {
+                string cellInfo = $"Шаг {step}: A{minI + 1} → B{minJ + 1} = {allocation}";
+                if (costs[minI, minJ] == 0 && allocation > 0)
+                    cellInfo += " [фиктивная перевозка]";
+                else if (costs[minI, minJ] > 0 && allocation > 0)
                     cellInfo += $" (минимальная стоимость: {costs[minI, minJ]})";
-                }
 
-                steps.AppendLine($"Шаг {step}: {cellInfo}");
+                steps.AppendLine(cellInfo);
 
                 sup[minI] -= allocation;
                 dem[minJ] -= allocation;
                 step++;
             }
 
-            steps.AppendLine($"\nРасчет завершен. Полная стоимость (включая фиктивные): {totalCost}");
+            steps.AppendLine();
+            steps.AppendLine("═══════════════════════════════════════════════════════════════");
+            steps.AppendLine($"ИТОГО: Полная стоимость перевозок = {totalCost}");
+            steps.AppendLine("═══════════════════════════════════════════════════════════════");
 
             return new SolutionResult
             {
